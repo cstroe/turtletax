@@ -13,10 +13,12 @@ public class TaxReturnPrinter {
     }
 
     public void print(TaxReturn taxReturn) {
+        FormPrinter fp = new FormPrinter(printStream);
         for(Form f : taxReturn.getForms()) {
             printStream.print("Form: ");
             printStream.print(f.getId());
             printStream.print("\n");
+            fp.print(f);
         }
     }
 }

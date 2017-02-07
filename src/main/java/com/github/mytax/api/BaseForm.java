@@ -40,10 +40,16 @@ public abstract class BaseForm implements Form {
     }
 
     @Override
+    public List<Cell> getCells() {
+        return new ArrayList<>(cells.values());
+    }
+
+    @Override
     public Cell getCell(String name) {
         return cells.get(name);
     }
 
+    @Override
     public Cell getCell(Line line) {
         return cellsByLine.get(line);
     }

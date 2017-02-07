@@ -63,11 +63,6 @@ class DslParserTest {
         DslParser parser = new DslParser();
         TaxReturn taxReturn = parser.parse(is);
 
-        List<Form> forms = taxReturn.getForms();
-        assertEquals(1, forms.size());
-        assertEquals("f1040", forms.get(0).getId());
-
-
         TaxReturnPrinter printer = new TaxReturnPrinter(System.out);
         printer.print(taxReturn);
     }

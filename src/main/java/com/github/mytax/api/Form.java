@@ -1,11 +1,13 @@
 package com.github.mytax.api;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static java.lang.String.format;
 
 public interface Form {
     String getId();
+    List<Cell> getCells();
     Cell getCell(Line line);
     Cell getCell(String name);
 
