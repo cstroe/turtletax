@@ -1,6 +1,6 @@
-package com.github.mytax.impl;
+package com.github.mytax.impl.cells;
 
-import lombok.Getter;
+import com.github.mytax.impl.cells.BaseCell;
 import lombok.Setter;
 
 import java.math.BigDecimal;

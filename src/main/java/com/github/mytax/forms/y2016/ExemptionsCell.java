@@ -1,9 +1,8 @@
 package com.github.mytax.forms.y2016;
 
 import com.github.mytax.api.Form;
-import com.github.mytax.impl.BaseCell;
-import com.github.mytax.impl.CountBoxesCell;
-import com.github.mytax.impl.MoneyCell;
+import com.github.mytax.impl.cells.CountBoxesCell;
+import com.github.mytax.impl.cells.MoneyCell;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -34,7 +33,9 @@ public class ExemptionsCell extends MoneyCell {
                 return Optional.empty();
             }
 
-            return 
+            return Optional.of(creditAmount.multiply(BigDecimal.valueOf(count.getValue().get())));
         }
+
+        return Optional.empty();
     }
 }

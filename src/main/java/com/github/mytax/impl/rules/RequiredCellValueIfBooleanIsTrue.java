@@ -4,8 +4,7 @@ import com.github.mytax.api.Cell;
 import com.github.mytax.api.Form;
 import com.github.mytax.api.Mistake;
 import com.github.mytax.api.Rule;
-import com.github.mytax.forms.y2016.Form1040;
-import com.github.mytax.impl.BooleanCell;
+import com.github.mytax.impl.cells.BooleanCell;
 
 import java.util.List;
 

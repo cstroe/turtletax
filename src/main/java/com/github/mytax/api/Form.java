@@ -1,9 +1,6 @@
 package com.github.mytax.api;
 
-import com.github.mytax.impl.BooleanCell;
-
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static java.lang.String.format;
 

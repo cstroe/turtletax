@@ -1,8 +1,9 @@
-package com.github.mytax.impl;
+package com.github.mytax.impl.cells;
 
 import com.github.mytax.api.Cell;
 import com.github.mytax.api.Form;
 import com.github.mytax.api.Line;
+import com.github.mytax.impl.cells.MoneyCell;
 
 import java.math.BigDecimal;
 import java.util.Optional;

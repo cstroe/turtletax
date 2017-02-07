@@ -1,4 +1,4 @@
-package com.github.mytax.impl;
+package com.github.mytax.impl.cells;
 
 import lombok.Setter;
 

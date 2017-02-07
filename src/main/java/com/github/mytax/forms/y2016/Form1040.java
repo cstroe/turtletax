@@ -2,12 +2,13 @@ package com.github.mytax.forms.y2016;
 
 import com.github.mytax.api.BaseForm;
 import lombok.Getter;
+import lombok.Setter;
 
 import static com.github.mytax.api.Line.line;
 import static com.github.mytax.impl.FormActions.subtract;
 
 public class Form1040 extends BaseForm implements Form1040CellNames {
-    @Getter final String id = "1040";
+    @Getter @Setter String id = "1040";
 
     public Form1040() {
         super();
@@ -118,6 +119,18 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
                 "Itemized deductions (from Schedule A) or your standard deduction (see left margin)", line(40));
         SubtractCell("taxAndCredits.subtract40from38", "Subtract line 40 from line 38", line(41),
                 subtract("40").from("38"));
+
+        ExemptionsCell("taxAndCredits.exemptions", "Exemptions. If line 38 is $155,650 or less, multiply $4,050 by the number on line 6d. Otherwise, see instructions", line(42));
+
+        NoLessThanZero(SubtractCell("taxAndCredits.taxableIncome", "Taxable income. Subtract line 42 from line 41. If line 42 is more than line 41, enter -0-", line(43),
+                subtract("42").from("41")));
+
+        BooleanCell("taxAndCredits.form8814", "Form(s) 8814", line("44a"));
+        BooleanCell("taxAndCredits.form4972", "Form 4972", line("44b"));
+        BooleanCell("taxAndCredits.otherForm", "Other Form?", line("44c"));
+        StringCell("taxAndCredits.otherFormNumber", "Other Form Name", line("44cn"));
+
+        MoneyCell("taxAndCredits.tax", "Tax", line(44));
 
 
     }
