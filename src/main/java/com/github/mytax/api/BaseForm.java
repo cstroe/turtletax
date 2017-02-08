@@ -2,10 +2,10 @@ package com.github.mytax.api;
 
 import com.github.mytax.forms.y2016.ExemptionsCell;
 import com.github.mytax.forms.y2016.Form1040;
+import com.github.mytax.impl.FormActions;
 import com.github.mytax.impl.cells.BaseCell;
 import com.github.mytax.impl.cells.BooleanCell;
 import com.github.mytax.impl.cells.CountBoxesCell;
-import com.github.mytax.impl.FormActions;
 import com.github.mytax.impl.cells.MoneyCell;
 import com.github.mytax.impl.cells.NoLessThanZeroCell;
 import com.github.mytax.impl.cells.SsnCell;
@@ -13,13 +13,15 @@ import com.github.mytax.impl.cells.StringCell;
 import com.github.mytax.impl.cells.SubtractCell;
 import com.github.mytax.impl.cells.SumCell;
 import com.github.mytax.impl.rules.CheckOneAndOnlyOne;
-import com.github.mytax.impl.rules.RequiredCellValue;
 import com.github.mytax.impl.rules.RequiredCellValueIfBooleanIsTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class BaseForm implements Form {
     private Map<String, Cell> cells;
@@ -58,6 +60,12 @@ public abstract class BaseForm implements Form {
         fillInAndAdd(new StringCell(), id, label);
     }
 
+    protected void RequiredStringCell(String id, String label) {
+        StringCell cell = new StringCell();
+        cell.setRequired(true);
+        fillInAndAdd(cell, id, label);
+    }
+
     protected void StringCell(String id, String label, Line line) {
         fillInAndAdd(new StringCell(), id, label, line);
     }
@@ -70,6 +78,7 @@ public abstract class BaseForm implements Form {
         cell.setId(id);
         cell.setLabel(label);
         cell.setLine(line);
+        cell.setForm(this);
         add(cell);
     }
 
@@ -138,7 +147,22 @@ public abstract class BaseForm implements Form {
         add(rule);
     }
 
-    protected void requiredValue(String cellId) {
-        add(new RequiredCellValue(this, cellId));
+    @Override
+    public List<Mistake> validate() {
+        return getCombinedRules().stream()
+                .flatMap(rule -> rule.validate().stream())
+                .collect(Collectors.toList());
+    }
+
+    private List<Rule> getCombinedRules() {
+        return Stream.of(rules, collectCellRules())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    private List<Rule> collectCellRules() {
+        return cells.values().stream()
+                .flatMap(cell -> (Stream<Rule>)cell.getRules().stream())
+                .collect(Collectors.toList());
     }
 }

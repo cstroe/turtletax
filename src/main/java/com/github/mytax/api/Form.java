@@ -10,6 +10,7 @@ public interface Form {
     List<Cell> getCells();
     Cell getCell(Line line);
     Cell getCell(String name);
+    List<Mistake> validate();
 
     @SuppressWarnings("unchecked")
     default <T extends Cell> T getCellAsType(Line line, Class<T> clazz) {

@@ -13,21 +13,18 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
     public Form1040() {
         super();
 
-        StringCell(YOUR_FIRST_NAME, "Your first name and initial");
-        StringCell(YOUR_LAST_NAME, "Last name");
-        StringCell(YOUR_SSN, "Your social security number");
-        requiredValue(YOUR_FIRST_NAME);
-        requiredValue(YOUR_LAST_NAME);
-        requiredValue(YOUR_SSN);
+        RequiredStringCell(YOUR_FIRST_NAME, "Your first name and initial");
+        RequiredStringCell(YOUR_LAST_NAME, "Last name");
+        RequiredStringCell(YOUR_SSN, "Your social security number");
 
         StringCell(SPOUSE_FIRST_NAME, "If a joint return, spouse's first name and initial");
         StringCell(SPOUSE_LAST_NAME, "Last name");
         StringCell(SPOUSE_SSN, "Spouse's social security number");
 
-        StringCell("homeAddress", "Home address (number and street). If you have a P.O. box, see instructions.");
+        RequiredStringCell("homeAddress", "Home address (number and street). If you have a P.O. box, see instructions.");
         StringCell("homeAptNo", "Apt. no.");
 
-        StringCell("homeCityStateZip", "City, town or post office, state, and ZIP code. If you have a foreign address, also complete spaces below (see instructions).");
+        RequiredStringCell("homeCityStateZip", "City, town or post office, state, and ZIP code. If you have a foreign address, also complete spaces below (see instructions).");
         StringCell("homeCountry", "Foreign country name");
         StringCell("homeProvinceStateCounty", "Foreign province/state/county");
         StringCell("homePostalCode", "Foreign postal code");

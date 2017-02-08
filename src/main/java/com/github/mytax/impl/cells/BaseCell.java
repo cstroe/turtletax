@@ -1,9 +1,12 @@
 package com.github.mytax.impl.cells;
 
 import com.github.mytax.api.Cell;
+import com.github.mytax.api.Form;
 import com.github.mytax.api.Line;
+import com.github.mytax.api.Rule;
 import com.github.mytax.api.event.CellValueChangeListener;
 import com.github.mytax.api.event.CellValueChangeSource;
+import com.github.mytax.impl.rules.RequiredCellValue;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +19,8 @@ public abstract class BaseCell<V> implements Cell<V>, CellValueChangeSource, Cel
     @Getter @Setter private String id;
     @Getter @Setter private String label;
     @Getter @Setter private Line line;
+    @Getter @Setter private boolean isRequired = false;
+    @Getter @Setter private Form form;
 
     private List<CellValueChangeListener> listeners = new ArrayList<>();
 
@@ -37,5 +42,16 @@ public abstract class BaseCell<V> implements Cell<V>, CellValueChangeSource, Cel
         } else {
             setValue(null);
         }
+    }
+
+    @Override
+    public List<Rule> getRules() {
+        if(form == null) {
+            throw new NullPointerException("No form set.");
+        }
+        if(isRequired) {
+            return Collections.singletonList(new RequiredCellValue(form, id));
+        }
+        return Collections.emptyList();
     }
 }

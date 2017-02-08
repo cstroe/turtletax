@@ -9,18 +9,18 @@ import java.util.List;
 
 public class RequiredCellValue implements Rule {
     private final Form form;
-    private final String cell;
+    private final String cellId;
 
-    public RequiredCellValue(Form form, String cell) {
+    public RequiredCellValue(Form form, String cellId) {
         this.form = form;
-        this.cell = cell;
+        this.cellId = cellId;
     }
 
     @Override
     public List<Mistake> validate() {
-        Cell thecell = form.getCell(cell);
+        Cell thecell = form.getCell(cellId);
         if(thecell.isNotFilledIn()) {
-            return aSimpleMistake("You must fill in cell %s", thecell.getId());
+            return aSimpleMistake("You must fill in cell with id '%s'", thecell.getId());
         } else {
             return noMistake();
         }

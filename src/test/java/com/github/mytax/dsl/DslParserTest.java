@@ -1,6 +1,7 @@
 package com.github.mytax.dsl;
 
 import com.github.mytax.api.Form;
+import com.github.mytax.api.Mistake;
 import com.github.mytax.impl.TaxReturn;
 import com.github.mytax.impl.cells.StringCell;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DslParserTest {
     @Test
@@ -65,5 +67,8 @@ class DslParserTest {
 
         TaxReturnPrinter printer = new TaxReturnPrinter(System.out);
         printer.print(taxReturn);
+
+        List<Mistake> mistakes = taxReturn.validate();
+        assertTrue(mistakes.size() > 0);
     }
 }
