@@ -119,8 +119,8 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
 
         ExemptionsCell("taxAndCredits.exemptions", "Exemptions. If line 38 is $155,650 or less, multiply $4,050 by the number on line 6d. Otherwise, see instructions", line(42));
 
-        NoLessThanZero(SubtractCell("taxAndCredits.taxableIncome", "Taxable income. Subtract line 42 from line 41. If line 42 is more than line 41, enter -0-", line(43),
-                subtract("42").from("41")));
+        SubtractCell("taxAndCredits.taxableIncome", "Taxable income. Subtract line 42 from line 41. If line 42 is more than line 41, enter -0-", line(43),
+                subtract("42").from("41")).feeds(NoLessThanZero());
 
         BooleanCell("taxAndCredits.form8814", "Form(s) 8814", line("44a"));
         BooleanCell("taxAndCredits.form4972", "Form 4972", line("44b"));

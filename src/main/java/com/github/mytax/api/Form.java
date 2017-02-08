@@ -1,5 +1,7 @@
 package com.github.mytax.api;
 
+import com.github.mytax.impl.TaxReturn;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -10,6 +12,7 @@ public interface Form {
     List<Cell> getCells();
     Cell getCell(Line line);
     Cell getCell(String name);
+    TaxReturn getTaxReturn();
     List<Mistake> validate();
 
     @SuppressWarnings("unchecked")

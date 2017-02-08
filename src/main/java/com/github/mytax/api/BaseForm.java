@@ -1,20 +1,26 @@
 package com.github.mytax.api;
 
+import com.github.mytax.api.event.CellValueChangeListener;
 import com.github.mytax.forms.y2016.ExemptionsCell;
 import com.github.mytax.forms.y2016.Form1040;
 import com.github.mytax.impl.FormActions;
+import com.github.mytax.impl.TaxReturn;
 import com.github.mytax.impl.cells.BaseCell;
 import com.github.mytax.impl.cells.BooleanCell;
 import com.github.mytax.impl.cells.CountBoxesCell;
 import com.github.mytax.impl.cells.MoneyCell;
-import com.github.mytax.impl.cells.NoLessThanZeroCell;
+import com.github.mytax.impl.cells.NoLessThanZeroListener;
 import com.github.mytax.impl.cells.SsnCell;
+import com.github.mytax.impl.cells.StateAbbreviationCell;
 import com.github.mytax.impl.cells.StringCell;
 import com.github.mytax.impl.cells.SubtractCell;
 import com.github.mytax.impl.cells.SumCell;
 import com.github.mytax.impl.rules.CheckOneAndOnlyOne;
 import com.github.mytax.impl.rules.RequiredCellValueIfBooleanIsTrue;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,10 +29,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+
 public abstract class BaseForm implements Form {
     private Map<String, Cell> cells;
     private Map<Line, Cell> cellsByLine;
     private List<Rule> rules;
+    @Getter @Setter private TaxReturn taxReturn;
 
     public BaseForm() {
         cells = new HashMap<>();
@@ -35,10 +44,16 @@ public abstract class BaseForm implements Form {
     }
 
     protected void add(Cell cell) {
-        cells.put(cell.getId(), cell);
+        if(cells.containsKey(cell.getId())) {
+            throw new IllegalArgumentException(format("Cannot use duplicate cell id: %s", cell.getId()));
+        }
         if(cell.getLine() != null) {
+            if(cellsByLine.containsKey(cell.getLine())) {
+                throw new IllegalArgumentException(format("Cannot use duplicate cell line number %s for cell id %s", cell.getLine().getLineNumber(), cell.getId()));
+            }
             cellsByLine.put(cell.getLine(), cell);
         }
+        cells.put(cell.getId(), cell);
     }
 
     @Override
@@ -128,8 +143,12 @@ public abstract class BaseForm implements Form {
         return cell;
     }
 
-    protected void NoLessThanZero(MoneyCell sourceCell) {
-        fillInAndAdd(new NoLessThanZeroCell(sourceCell), sourceCell.getId(), sourceCell.getLabel(), sourceCell.getLine());
+    protected void StateAbbreviationCell(String id, String label, Line line) {
+        fillInAndAdd(new StateAbbreviationCell(), id, label, line);
+    }
+
+    protected CellValueChangeListener<BigDecimal> NoLessThanZero() {
+        return new NoLessThanZeroListener();
     }
 
     protected void add(Rule rule) {
