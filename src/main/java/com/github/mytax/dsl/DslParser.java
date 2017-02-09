@@ -5,6 +5,7 @@ import com.github.mytax.api.Form;
 import com.github.mytax.forms.y2016.Form1040;
 import com.github.mytax.forms.y2016.FormW2;
 import com.github.mytax.impl.TaxReturn;
+import com.github.mytax.impl.cells.BooleanCell;
 import com.github.mytax.impl.cells.MoneyCell;
 import com.github.mytax.impl.cells.StringCell;
 
@@ -68,6 +69,14 @@ public class DslParser {
         } else if(MoneyCell.class.isAssignableFrom(cell.getClass())) {
             String cleanedUpDecimal = newValue.replaceAll(",", "");
             ((MoneyCell) cell).setValue(BigDecimal.valueOf(Double.parseDouble(cleanedUpDecimal)));
+        } else if(BooleanCell.class.isAssignableFrom(cell.getClass())) {
+            if("_".equals(newValue) || "N".equalsIgnoreCase(newValue)) {
+                ((BooleanCell) cell).setValue(false);
+            } else if("X".equalsIgnoreCase(newValue) || "Y".equalsIgnoreCase(newValue)) {
+                ((BooleanCell) cell).setValue(true);
+            } else {
+                throw new IllegalArgumentException(String.format("Unknown value '%s' for boolean cell.", newValue));
+            }
         } else {
             throw new UnsupportedOperationException("Don't know how to fill in " + cell.getClass().getCanonicalName());
         }

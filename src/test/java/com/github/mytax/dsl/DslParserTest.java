@@ -3,12 +3,14 @@ package com.github.mytax.dsl;
 import com.github.mytax.api.Form;
 import com.github.mytax.api.Mistake;
 import com.github.mytax.impl.TaxReturn;
+import com.github.mytax.impl.cells.BooleanCell;
 import com.github.mytax.impl.cells.MoneyCell;
 import com.github.mytax.impl.cells.StringCell;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -17,6 +19,8 @@ import java.util.List;
 
 import static com.github.mytax.api.Line.line;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("The DSL parser")
@@ -91,6 +95,36 @@ class DslParserTest {
         assertTrue(cell12a.getValue().get().equals("W"));
     }
 
+    @Test
+    @DisplayName("should fill in boolean values")
+    public void test07() {
+        TaxReturn taxReturn = parse("/dsl07.taxret");
+        Form f1040 = taxReturn.getForm("f1040").get();
+
+        BooleanCell c1 = f1040.getCellAsType(line(1), BooleanCell.class);
+        assertTrue(c1.getValue().isPresent(), "Cell 'filingStatus.single' should be filled in.");
+        assertTrue(c1.getValue().get());
+
+        BooleanCell c2 = f1040.getCellAsType("taxAndCredits.youBefore1952", BooleanCell.class);
+        assertTrue(c2.getValue().isPresent(), "Cell 'taxAndCredits.youBefore1952' should be filled in.");
+        assertTrue(c2.getValue().get());
+
+        BooleanCell c3 = f1040.getCellAsType("taxAndCredits.form8814", BooleanCell.class);
+        assertTrue(c3.getValue().isPresent(), "Cell 'taxAndCredits.form8814' should be filled in.");
+        assertFalse(c3.getValue().get());
+
+        BooleanCell c4 = f1040.getCellAsType(line("44b"), BooleanCell.class);
+        assertTrue(c4.getValue().isPresent(), "Cell '44b' should be filled in.");
+        assertFalse(c4.getValue().get());
+    }
+
+    @Test
+    @DisplayName("should fail on unknown boolean values")
+    public void test08() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new DslParser().parse(new ByteArrayInputStream("Form1040 f1040\nenter f1040 line 1 Z".getBytes()));
+        });
+    }
     private TaxReturn parse(String file) {
         InputStream is = getClass().getResourceAsStream(file);
         DslParser parser = new DslParser();
