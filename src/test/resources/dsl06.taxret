@@ -1,0 +1,7 @@
+Form1040 f1040
+enter f1040    agi.educatorExpenses         3,456.01
+
+W2 mycompany
+enter mycompany   line 1              1,000.00
+enter mycompany   line 11                 0.01
+enter mycompany   line 12a_code              W

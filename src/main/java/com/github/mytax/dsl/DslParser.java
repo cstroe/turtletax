@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
+import static com.github.mytax.api.Line.line;
+
 public class DslParser {
     public TaxReturn parse(InputStream is) {
         final TaxReturn taxReturn = new TaxReturn();
@@ -29,7 +31,7 @@ public class DslParser {
                     break;
                 case "enter":
                 case "set":
-                    setOnTaxReturn(taxReturn, parsedLine);
+                    enterOnTaxReturn(taxReturn, parsedLine);
                     break;
             }
         });
@@ -48,15 +50,23 @@ public class DslParser {
         taxReturn.addForm(form);
     }
 
-    public void setOnTaxReturn(TaxReturn taxReturn, String[] args) {
+    public void enterOnTaxReturn(TaxReturn taxReturn, String[] args) {
         Form form = taxReturn.getForm(args[1]).get();
 
-        Cell cell = form.getCell(args[2]);
+        if("line".equalsIgnoreCase(args[2])) {
+            Cell cell = form.getCell(line(args[3]));
+            enterValueInCell(cell, args[4]);
+        } else {
+            Cell cell = form.getCell(args[2]);
+            enterValueInCell(cell, args[3]);
+        }
+    }
 
+    private void enterValueInCell(Cell cell, String newValue) {
         if(StringCell.class.isAssignableFrom(cell.getClass())) {
-            ((StringCell) cell).setValue(args[3]);
+            ((StringCell) cell).setValue(newValue);
         } else if(MoneyCell.class.isAssignableFrom(cell.getClass())) {
-            String cleanedUpDecimal = args[3].replaceAll(",", "");
+            String cleanedUpDecimal = newValue.replaceAll(",", "");
             ((MoneyCell) cell).setValue(BigDecimal.valueOf(Double.parseDouble(cleanedUpDecimal)));
         } else {
             throw new UnsupportedOperationException("Don't know how to fill in " + cell.getClass().getCanonicalName());

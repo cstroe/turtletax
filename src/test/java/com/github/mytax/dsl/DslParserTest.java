@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.github.mytax.api.Line.line;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,6 +70,25 @@ class DslParserTest {
         assertTrue(nqpCell.getValue().isPresent(), "Nonqualified Plans should be filled in.");
         assertTrue(nqpCell.getValue().get().compareTo(BigDecimal.valueOf(0.01)) == 0, "Nonqualified Plans should be 0.01.");
 
+    }
+
+    @Test
+    @DisplayName("should fill in values given the line number")
+    public void test06() {
+        TaxReturn taxReturn = parse("/dsl06.taxret");
+        Form w2 = taxReturn.getForm("mycompany").get();
+
+        MoneyCell wagesCell = w2.getCellAsType(line(1), MoneyCell.class);
+        assertTrue(wagesCell.getValue().isPresent(), "Wages should be filled in.");
+        assertTrue(wagesCell.getValue().get().compareTo(BigDecimal.valueOf(1000)) == 0, "Wages should be 1,000.");
+
+        MoneyCell nqpCell = w2.getCellAsType(line(11), MoneyCell.class);
+        assertTrue(nqpCell.getValue().isPresent(), "Nonqualified Plans should be filled in.");
+        assertTrue(nqpCell.getValue().get().compareTo(BigDecimal.valueOf(0.01)) == 0, "Nonqualified Plans should be 0.01.");
+
+        StringCell cell12a = w2.getCellAsType(line("12a_code"), StringCell.class);
+        assertTrue(cell12a.getValue().isPresent(), "Cell 12a_code should be filled in.");
+        assertTrue(cell12a.getValue().get().equals("W"));
     }
 
     private TaxReturn parse(String file) {
