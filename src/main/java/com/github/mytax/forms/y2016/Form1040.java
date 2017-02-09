@@ -8,7 +8,9 @@ import static com.github.mytax.api.Line.line;
 import static com.github.mytax.impl.FormActions.subtract;
 
 public class Form1040 extends BaseForm implements Form1040CellNames {
-    @Getter @Setter String id = "1040";
+    public static final String ID = "1040";
+
+    @Getter @Setter String id = ID;
 
     public Form1040() {
         super();

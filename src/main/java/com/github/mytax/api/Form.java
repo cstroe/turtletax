@@ -29,6 +29,7 @@ public interface Form {
         }
     }
 
+    // TODO: Remove class parameter.
     @SuppressWarnings("unchecked")
     default <T extends Cell> T getCellAsType(String id, Class<T> clazz) {
         try {
