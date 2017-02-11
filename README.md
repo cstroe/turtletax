@@ -17,7 +17,7 @@ Currently, the way to interact with the program is to create a text file describ
     enter my1040 yourLastName  Smith
     enter my1040 income.taxableInterest  123.00
 
-Then run it through the `DslParser` and have your `TaxReturn` parsed.  You can call `validate()` on the tax return to check it.  See `DslParserTest`.
+Then run it through the `DslParser` and have your `TaxReturn` parsed.  You can call `validate()` on the tax return to check it.  See [DslParserTest](src/test/java/com/github/cstroe/turtletax/dsl/DslParserTest.java).
 
 ## Other Tax-related Projects
 * [Open Tax Solver](https://sourceforge.net/projects/opentaxsolver)
