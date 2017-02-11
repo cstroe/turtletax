@@ -6,6 +6,7 @@ import com.github.mytax.impl.TaxReturn;
 import com.github.mytax.impl.cells.BooleanCell;
 import com.github.mytax.impl.cells.MoneyCell;
 import com.github.mytax.impl.cells.StringCell;
+import lombok.val;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -125,6 +126,21 @@ class DslParserTest {
             new DslParser().parse(new ByteArrayInputStream("Form1040 f1040\nenter f1040 line 1 Z".getBytes()));
         });
     }
+
+    @Test
+    @DisplayName("should parse state abbreviation cells")
+    public void test09() {
+        val taxReturnString = "W2 w2\nenter w2 line 15 IL";
+        val baos = new ByteArrayInputStream(taxReturnString.getBytes());
+        val taxReturn = new DslParser().parse(baos);
+
+        val form = taxReturn.getForm("w2").get();
+        val cell = form.getCell(line(15));
+
+        assertTrue(cell.getValue().isPresent());
+        assertEquals("IL", cell.getValue().get());
+    }
+
     private TaxReturn parse(String file) {
         InputStream is = getClass().getResourceAsStream(file);
         DslParser parser = new DslParser();

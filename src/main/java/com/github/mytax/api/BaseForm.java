@@ -116,6 +116,13 @@ public abstract class BaseForm implements Form {
     }
 
     @Override
+    public Cell getCellById(String id) {
+        val cellId = getCellId(id)
+                .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", id)));
+        return getCell(cellId);
+    }
+
+    @Override
     public Optional<CellId> getCellId(String id) {
         for(CellId cid : cells.keySet()) {
             if(cid.getId().equals(id)) {

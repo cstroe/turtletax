@@ -8,6 +8,7 @@ import com.github.mytax.forms.y2016.FormW2;
 import com.github.mytax.impl.TaxReturn;
 import com.github.mytax.impl.cells.BooleanCell;
 import com.github.mytax.impl.cells.MoneyCell;
+import com.github.mytax.impl.cells.StateAbbreviationCell;
 import com.github.mytax.impl.cells.StringCell;
 
 import java.io.BufferedReader;
@@ -73,13 +74,15 @@ public class DslParser {
             String cleanedUpDecimal = newValue.replaceAll(",", "");
             ((MoneyCell) cell).setValue(BigDecimal.valueOf(Double.parseDouble(cleanedUpDecimal)));
         } else if(BooleanCell.class.isAssignableFrom(cell.getClass())) {
-            if("_".equals(newValue) || "N".equalsIgnoreCase(newValue)) {
+            if ("_".equals(newValue) || "N".equalsIgnoreCase(newValue)) {
                 ((BooleanCell) cell).setValue(false);
-            } else if("X".equalsIgnoreCase(newValue) || "Y".equalsIgnoreCase(newValue)) {
+            } else if ("X".equalsIgnoreCase(newValue) || "Y".equalsIgnoreCase(newValue)) {
                 ((BooleanCell) cell).setValue(true);
             } else {
                 throw new IllegalArgumentException(format("Unknown value '%s' for boolean cell.", newValue));
             }
+        } else if(StateAbbreviationCell.class.isAssignableFrom(cell.getClass())) {
+            ((StateAbbreviationCell) cell).setValue(newValue);
         } else {
             throw new UnsupportedOperationException("Don't know how to fill in " + cell.getClass().getCanonicalName());
         }

@@ -16,6 +16,7 @@ public interface Form {
     Optional<CellId> getCellId(String id);
     Cell getCell(Line line);
     Cell getCell(CellId id);
+    Cell getCellById(String id);
     TaxReturn getTaxReturn();
     List<Mistake> validate();
 
