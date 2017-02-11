@@ -29,6 +29,10 @@ public class FormW2 extends BaseForm {
             MoneyCell(cellId, cellId, line(cellId));
         });
 
+        BooleanCell("statEmp", "Stat. Emp.");
+        BooleanCell("retPlan", "Ret. plan");
+        BooleanCell("tpSickPay", "3rd party sick pay");
+
         StateAbbreviationCell("15", "State", line(15));
         StringCell("employerStateId", "Employer’s state ID no");
         MoneyCell("stateWages", "State wages, tips, etc.", line(16));

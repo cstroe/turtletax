@@ -1,5 +1,6 @@
 package com.github.mytax.impl.cells;
 
+import com.github.mytax.api.CellId;
 import com.github.mytax.api.Form;
 import com.github.mytax.api.Line;
 import com.github.mytax.impl.cells.MoneyCell;
@@ -10,10 +11,10 @@ import java.util.stream.Stream;
 
 public class SubtractCell extends MoneyCell {
     private final Form form;
-    private final String subtractFromThisCell;
-    private final String[] cellsToSubtract;
+    private final CellId subtractFromThisCell;
+    private final CellId[] cellsToSubtract;
 
-    public SubtractCell(Form form, String subtractFromThisCell, String... cellsToSubtract) {
+    public SubtractCell(Form form, CellId subtractFromThisCell, CellId... cellsToSubtract) {
         this.form = form;
         this.subtractFromThisCell = subtractFromThisCell;
         this.cellsToSubtract = cellsToSubtract;
@@ -22,7 +23,6 @@ public class SubtractCell extends MoneyCell {
     @Override
     public Optional<BigDecimal> getValue() {
         Optional<BigDecimal> sumOfCellsToSubtract = Stream.of(cellsToSubtract)
-                .map(Line::line)
                 .map(line -> form.getCellAsType(line, MoneyCell.class))
                 .map(MoneyCell::getValue)
                 .reduce(Optional.of(BigDecimal.ZERO), (Optional<BigDecimal> c1, Optional<BigDecimal> c2) -> {

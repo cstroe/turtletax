@@ -1,6 +1,7 @@
 package com.github.mytax.dsl;
 
 import com.github.mytax.api.Cell;
+import com.github.mytax.api.CellId;
 import com.github.mytax.api.Form;
 import com.github.mytax.forms.y2016.Form1040;
 import com.github.mytax.forms.y2016.FormW2;
@@ -15,6 +16,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 import static com.github.mytax.api.Line.line;
+import static java.lang.String.format;
 
 public class DslParser {
     public TaxReturn parse(InputStream is) {
@@ -58,7 +60,8 @@ public class DslParser {
             Cell cell = form.getCell(line(args[3]));
             enterValueInCell(cell, args[4]);
         } else {
-            Cell cell = form.getCell(args[2]);
+            CellId cellId = form.getCellId(args[2]).orElseThrow(() -> new IllegalArgumentException(format("Cannot find cell with id '%s'", args[2])));
+            Cell cell = form.getCell(cellId);
             enterValueInCell(cell, args[3]);
         }
     }
@@ -75,10 +78,10 @@ public class DslParser {
             } else if("X".equalsIgnoreCase(newValue) || "Y".equalsIgnoreCase(newValue)) {
                 ((BooleanCell) cell).setValue(true);
             } else {
-                throw new IllegalArgumentException(String.format("Unknown value '%s' for boolean cell.", newValue));
+                throw new IllegalArgumentException(format("Unknown value '%s' for boolean cell.", newValue));
             }
         } else {
-            throw new UnsupportedOperationException("Don't know how to fill in " + cell.getClass().getCanonicalName());
+            throw new UnsupportedOperationException("Don't know how ifFilled fill in " + cell.getClass().getCanonicalName());
         }
     }
 }

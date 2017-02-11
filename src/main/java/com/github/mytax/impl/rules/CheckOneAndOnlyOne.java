@@ -1,5 +1,6 @@
 package com.github.mytax.impl.rules;
 
+import com.github.mytax.api.CellId;
 import com.github.mytax.api.Form;
 import com.github.mytax.api.Mistake;
 import com.github.mytax.api.Rule;
@@ -13,9 +14,9 @@ import java.util.stream.Stream;
 
 public class CheckOneAndOnlyOne implements Rule {
     private final Form form;
-    private final String[] cells;
+    private final CellId[] cells;
 
-    public CheckOneAndOnlyOne(Form form, String... cells) {
+    public CheckOneAndOnlyOne(Form form, CellId... cells) {
         this.form = form;
         this.cells = cells;
     }
@@ -35,14 +36,14 @@ public class CheckOneAndOnlyOne implements Rule {
                     }).sum();
 
             if (numChecked == 0) {
-                mistakes.add(SimpleMistake.of("You must select your filing status."));
+                mistakes.add(SimpleMistake.of(null, "You must select your filing status."));
             } else if (numChecked > 1) {
-                mistakes.add(SimpleMistake.of("You must select only one filing status."));
+                mistakes.add(SimpleMistake.of(null, "You must select only one filing status."));
             }
 
             return mistakes;
         } catch (NoSuchElementException ex) {
-            return aSimpleMistake("Exception while trying to ensure only one checkbox checked: %s", ex.getMessage());
+            return aSimpleMistake(null, "Exception while trying ifFilled ensure only one checkbox checked: %s", ex.getMessage());
         }
     }
 }

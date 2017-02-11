@@ -17,7 +17,7 @@ public class FormPrinter {
 
     public void print(Form form) {
         List<Cell> cells = form.getCells();
-        Collections.sort(cells, Comparator.comparing(Cell::getId));
+        Collections.sort(cells);
         for(Cell cell : cells) {
             ps.print(cell.getId());
             ps.print(": ");

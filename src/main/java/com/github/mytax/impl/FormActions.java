@@ -1,20 +1,28 @@
 package com.github.mytax.impl;
 
-public class FormActions {
-    public static Subtract subtract(String line) { return new Subtract(line); };
+import com.github.mytax.api.CellId;
+import com.github.mytax.api.Form;
 
+public class FormActions {
     public static class Subtract {
-        public final String from;
-        public Subtract(String from) { this.from = from; }
+        private final Form form;
+        private final CellId from;
+        public Subtract(Form form, CellId from) {
+            this.form = form;
+            this.from = from;
+        }
+
         public SubtractFrom from(String... lines) {
-            return new SubtractFrom(from, lines);
+            return new SubtractFrom(form, from, form.getCellIdsFromLines(lines));
         }
     }
 
     public static class SubtractFrom {
-        public final String from;
-        public final String[] lines;
-        public SubtractFrom(String from, String... lines) {
+        private final Form form;
+        public final CellId from;
+        public final CellId[] lines;
+        public SubtractFrom(Form form, CellId from, CellId... lines) {
+            this.form = form;
             this.from = from;
             this.lines = lines;
         }

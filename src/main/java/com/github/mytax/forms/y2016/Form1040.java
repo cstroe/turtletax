@@ -4,8 +4,9 @@ import com.github.mytax.api.BaseForm;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.stream.Stream;
+
 import static com.github.mytax.api.Line.line;
-import static com.github.mytax.impl.FormActions.subtract;
 
 public class Form1040 extends BaseForm implements Form1040CellNames {
     public static final String ID = "1040";
@@ -15,24 +16,29 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
     public Form1040() {
         super();
 
-        RequiredStringCell(YOUR_FIRST_NAME, "Your first name and initial");
-        RequiredStringCell(YOUR_LAST_NAME, "Last name");
-        RequiredStringCell(YOUR_SSN, "Your social security number");
+        StringCell(YOUR_FIRST_NAME, "Your first name and initial");
+        Require(YOUR_FIRST_NAME).always();
+        StringCell(YOUR_LAST_NAME, "Last name");
+        Require(YOUR_LAST_NAME).always();
+        StringCell(YOUR_SSN, "Your social security number");
+        Require(YOUR_SSN).always();
 
         StringCell(SPOUSE_FIRST_NAME, "If a joint return, spouse's first name and initial");
         StringCell(SPOUSE_LAST_NAME, "Last name");
         StringCell(SPOUSE_SSN, "Spouse's social security number");
 
-        RequiredStringCell("homeAddress", "Home address (number and street). If you have a P.O. box, see instructions.");
+        StringCell("homeAddress", "Home address (number and street). If you have a P.O. box, see instructions.");
+        Require("homeAddress").always();
         StringCell("homeAptNo", "Apt. no.");
 
-        RequiredStringCell("homeCityStateZip", "City, town or post office, state, and ZIP code. If you have a foreign address, also complete spaces below (see instructions).");
+        StringCell("homeCityStateZip", "City, town or post office, state, and ZIP code. If you have a foreign address, also complete spaces below (see instructions).");
+        Require("homeCityStateZip").always();
         StringCell("homeCountry", "Foreign country name");
         StringCell("homeProvinceStateCounty", "Foreign province/state/county");
         StringCell("homePostalCode", "Foreign postal code");
 
-        BooleanCell("yourPecDonation", "Presidential Election Campaign: Check if you want $3 to go to this fund. Checking a box will not change your tax or refund. You:");
-        BooleanCell("spousePecDonation", "Presidential Election Campaign: Check if you want $3 to go to this fund. Checking a box will not change your tax or refund. Spouse:");
+        BooleanCell("yourPecDonation", "Presidential Election Campaign: Check if you want $3 ifFilled go ifFilled this fund. Checking a box will not change your tax or refund. You:");
+        BooleanCell("spousePecDonation", "Presidential Election Campaign: Check if you want $3 ifFilled go ifFilled this fund. Checking a box will not change your tax or refund. Spouse:");
 
         // filing status
         BooleanCell(FILING_STATUS_SINGLE, "Single", line(1));
@@ -44,15 +50,37 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
         BooleanCell(FILING_STATUS_WIDOWER, "Qualifying widow(er) with dependent child", line(5));
         CheckOneAndOnlyOne(FILING_STATUS_SINGLE, FILING_STATUS_JOINTLY, FILING_STATUS_SEPARATELY,
                 FILING_STATUS_HEAD_OF_HOUSEHOLD, FILING_STATUS_WIDOWER);
-        RequiredCellValueIfBooleanIsTrue(FILING_STATUS_JOINTLY, SPOUSE_FIRST_NAME);
-        RequiredCellValueIfBooleanIsTrue(FILING_STATUS_JOINTLY, SPOUSE_LAST_NAME);
-        RequiredCellValueIfBooleanIsTrue(FILING_STATUS_JOINTLY, SPOUSE_SSN);
-        RequiredCellValueIfBooleanIsTrue(FILING_STATUS_SEPARATELY, FILING_STATUS_SPOUSE_NAME);
-        RequiredCellValueIfBooleanIsTrue(FILING_STATUS_SEPARATELY, SPOUSE_SSN);
+        Require(SPOUSE_FIRST_NAME).ifChecked(FILING_STATUS_JOINTLY);
+        Require(SPOUSE_LAST_NAME).ifChecked(FILING_STATUS_JOINTLY);
+        Require(SPOUSE_SSN).ifChecked(FILING_STATUS_JOINTLY);
+        Require(FILING_STATUS_SPOUSE_NAME).ifChecked(FILING_STATUS_SEPARATELY);
+        Require(SPOUSE_SSN).ifChecked(FILING_STATUS_SEPARATELY);
 
         // exemptions
         BooleanCell("exemptions.yourself", "Yourself. If someone can claim you as a dependent, do not check box 6a.", line("6a"));
         BooleanCell("exemptions.spouse", "Spouse.", line("6b"));
+
+        Stream.of("1", "2", "3", "4").forEach(num -> {
+            String prefix = "dependent." + num + ".";
+            StringCell (prefix + "firstName", "Dependent first name");
+
+            StringCell (prefix + "lastName", "Dependent last name");
+            Require(prefix + "lastName").ifFilled(prefix + "firstName");
+
+            SsnCell    (prefix + "ssn", "Dependent SSN");
+            Require(prefix + "ssn").ifFilled(prefix + "lastName");
+
+            StringCell (prefix + "relationship", "Dependent's relationship ifFilled you");
+            Require(prefix + "relationship").ifFilled(prefix + "ssn");
+
+            BooleanCell(prefix + "qualifyingChild", "Dependent is a child under the age of 17 qualifying for child tax credit. (see instructions)");
+            Require(prefix + "qualifyingChild").ifFilled(prefix + "relationship");
+        });
+
+        CountFilledInCell("6c", "Number of dependents", line("6c"), this,
+                "exemptions.yourself", "exemptions.spouse",
+                "dependent.1.firstName", "dependent.2.firstName",
+                "dependent.3.firstName", "dependent.4.firstName");
 
         // income
         MoneyCell("income.w2", "Wages, salaries, tips, etc. Attach Form(s) W-2", line(7));
@@ -99,7 +127,7 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
                 line(23), line(24), line(25), line(26), line(27), line("28"), line("29"),
                 line("30"), line("31a"), line("32"), line("33"), line("34"), line("35"));
         SubtractCell("agi.value", "Subtract line 36 from line 22. This is your adjusted gross income", line(37),
-                subtract("36").from("22"));
+                Subtract("36").from("22"));
 
         MoneyCell("agi.valueCopy", "Amount from line 37 (adjusted gross income)", line(38), this, line(37));
 
@@ -117,12 +145,12 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
         MoneyCell("taxAndCredits.itemizedDeductionOrStandard",
                 "Itemized deductions (from Schedule A) or your standard deduction (see left margin)", line(40));
         SubtractCell("taxAndCredits.subtract40from38", "Subtract line 40 from line 38", line(41),
-                subtract("40").from("38"));
+                Subtract("40").from("38"));
 
         ExemptionsCell("taxAndCredits.exemptions", "Exemptions. If line 38 is $155,650 or less, multiply $4,050 by the number on line 6d. Otherwise, see instructions", line(42));
 
         SubtractCell("taxAndCredits.taxableIncome", "Taxable income. Subtract line 42 from line 41. If line 42 is more than line 41, enter -0-", line(43),
-                subtract("42").from("41")).feeds(NoLessThanZero());
+                Subtract("42").from("41")).feeds(NoLessThanZero());
 
         BooleanCell("taxAndCredits.form8814", "Form(s) 8814", line("44a"));
         BooleanCell("taxAndCredits.form4972", "Form 4972", line("44b"));

@@ -8,6 +8,7 @@ import com.github.mytax.impl.TaxReturn;
 import com.github.mytax.impl.cells.BaseCell;
 import com.github.mytax.impl.cells.BooleanCell;
 import com.github.mytax.impl.cells.CountBoxesCell;
+import com.github.mytax.impl.cells.CountFilledInCell;
 import com.github.mytax.impl.cells.MoneyCell;
 import com.github.mytax.impl.cells.NoLessThanZeroListener;
 import com.github.mytax.impl.cells.SsnCell;
@@ -16,23 +17,50 @@ import com.github.mytax.impl.cells.StringCell;
 import com.github.mytax.impl.cells.SubtractCell;
 import com.github.mytax.impl.cells.SumCell;
 import com.github.mytax.impl.rules.CheckOneAndOnlyOne;
+import com.github.mytax.impl.rules.RequiredCellIfValueIsFilledIn;
+import com.github.mytax.impl.rules.RequiredCellValue;
 import com.github.mytax.impl.rules.RequiredCellValueIfBooleanIsTrue;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
 public abstract class BaseForm implements Form {
-    private Map<String, Cell> cells;
+
+    public class Require {
+        private final CellId requiredId;
+
+        Require(CellId requiredId) {
+            this.requiredId = requiredId;
+        }
+
+        public void always() {
+            BaseForm.this.add(new RequiredCellValue(BaseForm.this, requiredId));
+        }
+
+        public void ifFilled(String checkThisId) {
+            CellId cid = getCellId(checkThisId)
+                    .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", checkThisId)));;
+            BaseForm.this.add(new RequiredCellIfValueIsFilledIn(BaseForm.this, cid, requiredId));
+        }
+
+        public void ifChecked(String booleanCell) {
+            CellId booleanCellId = getCellId(booleanCell)
+                    .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", booleanCell)));
+            BaseForm.this.add(new RequiredCellValueIfBooleanIsTrue(BaseForm.this, booleanCellId, requiredId));
+        }
+    }
+
+    private Map<CellId, Cell> cells;
     private Map<Line, Cell> cellsByLine;
     private List<Rule> rules;
     @Getter @Setter private TaxReturn taxReturn;
@@ -43,8 +71,14 @@ public abstract class BaseForm implements Form {
         rules = new ArrayList<>();
     }
 
-    protected void add(Cell cell) {
-        if(cells.containsKey(cell.getId())) {
+    protected void add(String id, Cell cell) {
+        if(id == null) {
+            throw new NullPointerException("Cannot add a cell with a null id.");
+        }
+
+        CellId cid = new CellId(id);
+        cell.setId(cid);
+        if(cells.containsKey(cid)) {
             throw new IllegalArgumentException(format("Cannot use duplicate cell id: %s", cell.getId()));
         }
         if(cell.getLine() != null) {
@@ -62,8 +96,8 @@ public abstract class BaseForm implements Form {
     }
 
     @Override
-    public Cell getCell(String name) {
-        return cells.get(name);
+    public Cell getCell(CellId id) {
+        return cells.get(id);
     }
 
     @Override
@@ -71,14 +105,28 @@ public abstract class BaseForm implements Form {
         return cellsByLine.get(line);
     }
 
-    protected void StringCell(String id, String label) {
-        fillInAndAdd(new StringCell(), id, label);
+    private CellId[] getCells(String... cells) {
+        CellId[] cellIds = new CellId[cells.length];
+        for (int i = 0; i < cells.length; i++) {
+            val currentId = cells[i];
+            cellIds[i] = getCellId(cells[i])
+                    .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", currentId)));
+        }
+        return cellIds;
     }
 
-    protected void RequiredStringCell(String id, String label) {
-        StringCell cell = new StringCell();
-        cell.setRequired(true);
-        fillInAndAdd(cell, id, label);
+    @Override
+    public Optional<CellId> getCellId(String id) {
+        for(CellId cid : cells.keySet()) {
+            if(cid.getId().equals(id)) {
+                return Optional.of(cid);
+            }
+        }
+        return Optional.empty();
+    }
+
+    protected void StringCell(String id, String label) {
+        fillInAndAdd(new StringCell(), id, label);
     }
 
     protected void StringCell(String id, String label, Line line) {
@@ -90,11 +138,10 @@ public abstract class BaseForm implements Form {
     }
 
     private void fillInAndAdd(BaseCell cell, String id, String label, Line line) {
-        cell.setId(id);
+        cell.setId(new CellId(id));
         cell.setLabel(label);
         cell.setLine(line);
-        cell.setForm(this);
-        add(cell);
+        add(id, cell);
     }
 
     protected void MoneyCell(String id, String label, Line line) {
@@ -119,12 +166,18 @@ public abstract class BaseForm implements Form {
         fillInAndAdd(new SumCell(this, linesToAddUp), id, label, line);
     }
 
+    protected void SsnCell(String id, String label) {
+        fillInAndAdd(new SsnCell(), id, label);
+    }
+
     protected void SsnCell(String id, String label, Line line) {
         fillInAndAdd(new SsnCell(), id, label, line);
     }
 
     protected void SubtractCell(String id, String label, Line line, String subtractFrom, String... cells) {
-        fillInAndAdd(new SubtractCell(this, subtractFrom, cells), id, label, line);
+        CellId subtractFromCell = getCellId(subtractFrom)
+                .orElseThrow(() -> new IllegalArgumentException(format("Cannot find cell with id '%s'",id)));
+        fillInAndAdd(new SubtractCell(this, subtractFromCell, getCells(cells)), id, label, line);
     }
 
     protected SubtractCell SubtractCell(String id, String label, Line line, FormActions.SubtractFrom subtractFrom) {
@@ -134,7 +187,11 @@ public abstract class BaseForm implements Form {
     }
 
     protected void CountBoxesCell(String id, String label, Line line, Form1040 form, String... cells) {
-        fillInAndAdd(new CountBoxesCell(form, cells), id, label, line);
+        fillInAndAdd(new CountBoxesCell(form, getCells(cells)), id, label, line);
+    }
+
+    protected void CountFilledInCell(String id, String label, Line line, Form1040 form, String... cells) {
+        fillInAndAdd(new CountFilledInCell(form, getCells(cells)), id, label, line);
     }
 
     protected ExemptionsCell ExemptionsCell(String id, String label, Line line) {
@@ -147,6 +204,11 @@ public abstract class BaseForm implements Form {
         fillInAndAdd(new StateAbbreviationCell(), id, label, line);
     }
 
+    protected FormActions.Subtract Subtract(String line) {
+        CellId thisId = getCell(Line.line(line)).getId();
+        return new FormActions.Subtract(this, thisId);
+    }
+
     protected CellValueChangeListener<BigDecimal> NoLessThanZero() {
         return new NoLessThanZeroListener();
     }
@@ -155,33 +217,32 @@ public abstract class BaseForm implements Form {
         rules.add(rule);
     }
 
-    protected void RequiredCellValueIfBooleanIsTrue(String checkBox, String requiredValue) {
+    protected void RequiredCellValueIfBooleanIsTrue(CellId checkBox, CellId requiredValue) {
         RequiredCellValueIfBooleanIsTrue rule =
                 new RequiredCellValueIfBooleanIsTrue(this, checkBox, requiredValue);
         add(rule);
     }
 
+    protected void RequiredValueIfCellIsFilled(CellId requiredId, CellId checkThisId) {
+        RequiredCellIfValueIsFilledIn rule = new RequiredCellIfValueIsFilledIn(this, checkThisId, requiredId);
+        add(rule);
+    }
+
+    protected Require Require(String requiredId) {
+        CellId required = getCellId(requiredId)
+                .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", requiredId)));;
+        return new Require(required);
+    }
+
     protected void CheckOneAndOnlyOne(String... checkboxIds) {
-        Rule rule = new CheckOneAndOnlyOne(this, checkboxIds);
+        Rule rule = new CheckOneAndOnlyOne(this, getCells(checkboxIds));
         add(rule);
     }
 
     @Override
     public List<Mistake> validate() {
-        return getCombinedRules().stream()
+        return rules.stream()
                 .flatMap(rule -> rule.validate().stream())
-                .collect(Collectors.toList());
-    }
-
-    private List<Rule> getCombinedRules() {
-        return Stream.of(rules, collectCellRules())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
-
-    private List<Rule> collectCellRules() {
-        return cells.values().stream()
-                .flatMap(cell -> (Stream<Rule>)cell.getRules().stream())
                 .collect(Collectors.toList());
     }
 }
