@@ -24,3 +24,20 @@ Then run it through the `DslParser` and have your `TaxReturn` parsed.  You can c
 * [phptax](https://sourceforge.net/projects/phptax)
 * [py1040](https://github.com/b-k/py1040)
 * [1040js](https://github.com/b-k/1040.js)
+
+## Disclaimer
+
+Section 15 of the license:
+
+> THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+> APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+> HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT
+> WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT
+> LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+> A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND
+> PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE
+> DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR
+> CORRECTION.
+
+We leave it up to anyone using this software to check the applicability or validity of any output of this program.  There is no warranty of any kind, for any purpose.
+
