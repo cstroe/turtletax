@@ -81,7 +81,7 @@ public class DslParser {
                 throw new IllegalArgumentException(format("Unknown value '%s' for boolean cell.", newValue));
             }
         } else {
-            throw new UnsupportedOperationException("Don't know how ifFilled fill in " + cell.getClass().getCanonicalName());
+            throw new UnsupportedOperationException("Don't know how to fill in " + cell.getClass().getCanonicalName());
         }
     }
 }
