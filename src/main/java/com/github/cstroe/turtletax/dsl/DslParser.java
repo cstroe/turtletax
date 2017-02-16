@@ -45,6 +45,7 @@ public class DslParser {
     public void createForm1040(TaxReturn taxReturn, String[] args) {
         Form1040 form1040 = new Form1040();
         form1040.setId(args[1]);
+        form1040.setTaxReturn(taxReturn);
         taxReturn.addForm(form1040);
     }
 
