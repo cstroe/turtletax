@@ -19,17 +19,14 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.github.cstroe.turtletax.api.Line.line;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("The DSL parser")
 class DslParserTest {
     @Test
     @DisplayName("should create Form 1040")
     public void test01() {
-        List<Form> forms = parse("/dsl01.taxret").getForms();
+        List<Form> forms = parse("Form1040 f1040").getForms();
         assertEquals(1, forms.size());
         assertEquals("f1040", forms.get(0).getId());
     }
@@ -37,23 +34,24 @@ class DslParserTest {
     @Test
     @DisplayName("should fill in a string value")
     public void test02() {
-        Form form = parse("/dsl02.taxret").getForms().get(0);
+        Form form = parse("Form1040 f1040\nset f1040 yourFirstName Bob").getForms().get(0);
         StringCell cell = form.getCellAsType("yourFirstName", StringCell.class);
-        assertEquals("Cosmin", cell.getValue().get());
+        assertEquals("Bob", cell.getValue().get());
     }
 
     @Test
     @DisplayName("should ignore white space lines and comments")
     public void test03() {
-        Form form = parse("/dsl03.taxret").getForms().get(0);
+        Form form = parse("\n# This is a comment\nForm1040 f1040\nset f1040 yourFirstName Bob")
+                .getForms().get(0);
         StringCell cell = form.getCellAsType("yourFirstName", StringCell.class);
-        assertEquals("Cosmin", cell.getValue().get());
+        assertEquals("Bob", cell.getValue().get());
     }
 
     @Test
     @DisplayName("should parse money value")
     public void test04() {
-        TaxReturn taxReturn = parse("/dsl04.taxret");
+        TaxReturn taxReturn = parse("Form1040 f1040\nenter f1040 agi.educatorExpenses 3,456.01");
         Form form1040 = taxReturn.getForm("f1040").get();
         MoneyCell cell = form1040.getCellAsType("agi.educatorExpenses", MoneyCell.class);
 
@@ -64,7 +62,7 @@ class DslParserTest {
     @Test
     @DisplayName("should create form w2 and fill in values for it")
     public void test05() {
-        TaxReturn taxReturn = parse("/dsl05.taxret");
+        TaxReturn taxReturn = parseFromFile("/dsl05.taxret");
         Form w2 = taxReturn.getForm("mycompany").get();
 
         MoneyCell wagesCell = w2.getCellAsType("wages", MoneyCell.class);
@@ -80,7 +78,7 @@ class DslParserTest {
     @Test
     @DisplayName("should fill in values given the line number")
     public void test06() {
-        TaxReturn taxReturn = parse("/dsl06.taxret");
+        TaxReturn taxReturn = parseFromFile("/dsl06.taxret");
         Form w2 = taxReturn.getForm("mycompany").get();
 
         MoneyCell wagesCell = w2.getCellAsType(line(1), MoneyCell.class);
@@ -99,7 +97,7 @@ class DslParserTest {
     @Test
     @DisplayName("should fill in boolean values")
     public void test07() {
-        TaxReturn taxReturn = parse("/dsl07.taxret");
+        TaxReturn taxReturn = parseFromFile("/dsl07.taxret");
         Form f1040 = taxReturn.getForm("f1040").get();
 
         BooleanCell c1 = f1040.getCellAsType(line(1), BooleanCell.class);
@@ -141,7 +139,21 @@ class DslParserTest {
         assertEquals("IL", cell.getValue().get());
     }
 
-    private TaxReturn parse(String file) {
+    @Test
+    @DisplayName("should set the tax return when creating Form1040")
+    public void test10() {
+        val taxReturn = parse("Form1040 f1040");
+        val form = taxReturn.getForm("f1040")
+                .orElseThrow(() -> new AssertionError("Could not find form 'f1040'"));
+        assertNotNull(form.getTaxReturn());
+    }
+
+    private TaxReturn parse(String taxReturn) {
+        return new DslParser()
+                .parse(new ByteArrayInputStream(taxReturn.getBytes()));
+    }
+
+    private TaxReturn parseFromFile(String file) {
         InputStream is = getClass().getResourceAsStream(file);
         DslParser parser = new DslParser();
         return parser.parse(is);
@@ -150,7 +162,7 @@ class DslParserTest {
     @Test
     @Disabled
     public void test() throws FileNotFoundException {
-        InputStream is = new FileInputStream("/home/marin/Zoo/07-income-tax-helper/2016.taxreturn");
+        InputStream is = new FileInputStream("/home/cosmin/Zoo/01-turtletax/2016.taxreturn");
 
         DslParser parser = new DslParser();
         TaxReturn taxReturn = parser.parse(is);
