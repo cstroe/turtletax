@@ -1,3 +1,5 @@
+![GNU Affero GPL v3](https://img.shields.io/badge/license-Affero%20GPL%20v3-blue.svg)
+
 # TurtleTax
 
 A personal tax helper for US Federal Income Tax.
