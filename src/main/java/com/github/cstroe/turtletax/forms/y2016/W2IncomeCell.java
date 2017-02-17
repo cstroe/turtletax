@@ -17,7 +17,7 @@ public class W2IncomeCell extends MoneyCell {
         val w2forms = getForm().getTaxReturn().getForms().stream()
                 .filter(form -> match(form, FormW2.class))
                 .collect(Collectors.toList());
-        BigDecimal sum = null;
+        BigDecimal sum = BigDecimal.ZERO;
         for(Form w2 : w2forms) {
             val wages = w2.getCellAsType(line(1), MoneyCell.class).getValue();
             if(!wages.isPresent()) {
@@ -31,6 +31,6 @@ public class W2IncomeCell extends MoneyCell {
             }
         }
 
-        return Optional.ofNullable(sum);
+        return Optional.of(sum);
     }
 }
