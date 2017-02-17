@@ -9,13 +9,14 @@ import java.util.stream.Stream;
 import static com.github.cstroe.turtletax.api.Line.line;
 
 public class Form1040 extends BaseForm implements Form1040CellNames {
-    public static final String ID = "1040";
+    @Getter @Setter String name;
 
-    @Getter @Setter String id = ID;
+    public Form1040(String name) {
+        this();
+        setName(name);
+    }
 
     public Form1040() {
-        super();
-
         StringCell(YOUR_FIRST_NAME, "Your first name and initial");
         Require(YOUR_FIRST_NAME).always();
         StringCell(YOUR_LAST_NAME, "Last name");
@@ -83,7 +84,7 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
                 "dependent.3.firstName", "dependent.4.firstName");
 
         // income
-        MoneyCell("income.w2", "Wages, salaries, tips, etc. Attach Form(s) W-2", line(7));
+        Cell(new W2IncomeCell(), "income.w2", "Wages, salaries, tips, etc. Attach Form(s) W-2", line(7));
         MoneyCell("income.taxableInterest", "Taxable interest. Attach Schedule B if required", line("8a"));
         MoneyCell("income.taxExemptInterest", "Tax-exempt interest. Do not include on line 8a", line("8b"));
         MoneyCell("income.ordinaryDividens", "Ordinary dividends. Attach Schedule B if required", line("9a"));

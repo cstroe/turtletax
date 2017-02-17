@@ -43,15 +43,12 @@ public class DslParser {
     }
 
     public void createForm1040(TaxReturn taxReturn, String[] args) {
-        Form1040 form1040 = new Form1040();
-        form1040.setId(args[1]);
-        form1040.setTaxReturn(taxReturn);
+        Form1040 form1040 = new Form1040(args[1]);
         taxReturn.addForm(form1040);
     }
 
     public void createW2(TaxReturn taxReturn, String[] args) {
-        FormW2 form = new FormW2();
-        form.setId(args[1]);
+        FormW2 form = new FormW2(args[1]);
         taxReturn.addForm(form);
     }
 

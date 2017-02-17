@@ -16,7 +16,7 @@ public class TaxReturnPrinter {
         FormPrinter fp = new FormPrinter(printStream);
         for(Form f : taxReturn.getForms()) {
             printStream.print("Form: ");
-            printStream.print(f.getId());
+            printStream.print(f.getName());
             printStream.print("\n");
             fp.print(f);
         }

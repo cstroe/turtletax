@@ -17,7 +17,7 @@ public class TaxReturnTest {
     @DisplayName("should return a form")
     public void gettingAForm() {
         Form myForm = mock(Form.class);
-        when(myForm.getId()).thenReturn("formId");
+        when(myForm.getName()).thenReturn("formId");
         TaxReturn taxReturn = new TaxReturn();
         taxReturn.addForm(myForm);
         Optional<Form> aForm = taxReturn.getForm("formId");

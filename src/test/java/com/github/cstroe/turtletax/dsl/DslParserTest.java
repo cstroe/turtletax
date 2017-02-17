@@ -28,7 +28,7 @@ class DslParserTest {
     public void test01() {
         List<Form> forms = parse("Form1040 f1040").getForms();
         assertEquals(1, forms.size());
-        assertEquals("f1040", forms.get(0).getId());
+        assertEquals("f1040", forms.get(0).getName());
     }
 
     @Test
@@ -148,6 +148,16 @@ class DslParserTest {
         assertNotNull(form.getTaxReturn());
     }
 
+    @Test
+    @DisplayName("should set the tax return when creating a W2 form")
+    public void test11() {
+        val taxReturn = parse("W2 formW2");
+        val form = taxReturn.getForm("formW2")
+                .orElseThrow(() -> new AssertionError("Could not find form 'formW2'"));
+        assertNotNull(form.getTaxReturn());
+    }
+
+
     private TaxReturn parse(String taxReturn) {
         return new DslParser()
                 .parse(new ByteArrayInputStream(taxReturn.getBytes()));
@@ -157,20 +167,5 @@ class DslParserTest {
         InputStream is = getClass().getResourceAsStream(file);
         DslParser parser = new DslParser();
         return parser.parse(is);
-    }
-
-    @Test
-    @Disabled
-    public void test() throws FileNotFoundException {
-        InputStream is = new FileInputStream("/home/cosmin/Zoo/01-turtletax/2016.taxreturn");
-
-        DslParser parser = new DslParser();
-        TaxReturn taxReturn = parser.parse(is);
-
-        TaxReturnPrinter printer = new TaxReturnPrinter(System.out);
-        printer.print(taxReturn);
-
-        List<Mistake> mistakes = taxReturn.validate();
-        assertTrue(mistakes.size() > 0);
     }
 }

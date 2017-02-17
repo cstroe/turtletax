@@ -148,7 +148,12 @@ public abstract class BaseForm implements Form {
         cell.setId(new CellId(id));
         cell.setLabel(label);
         cell.setLine(line);
+        cell.setForm(this);
         add(id, cell);
+    }
+
+    protected void Cell(BaseCell cell, String id, String label, Line line) {
+        fillInAndAdd(cell, id, label, line);
     }
 
     protected void MoneyCell(String id, String label, Line line) {

@@ -11,6 +11,7 @@ public interface Cell<V> extends Comparable {
     void setId(CellId cid);
     String getLabel();
     Line getLine();
+    Form getForm();
 
     Optional<V> getValue();
     void setValue(V value);

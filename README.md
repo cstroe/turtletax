@@ -4,7 +4,7 @@ A personal tax helper for US Federal Income Tax.
 
 This project is nowhere near ready to be used and development is ongoing.
 
-## Usage
+## Creating a tax return
 
 Currently, the way to interact with the program is to create a text file describing your tax return:
 
@@ -17,7 +17,14 @@ Currently, the way to interact with the program is to create a text file describ
     enter my1040 yourLastName  Smith
     enter my1040 income.taxableInterest  123.00
 
-Then run it through the `DslParser` and have your `TaxReturn` parsed.  You can call `validate()` on the tax return to check it.  See [DslParserTest](src/test/java/com/github/cstroe/turtletax/dsl/DslParserTest.java).
+## Parsing your tax return
+
+Using maven:
+
+    ./mvnw clean compile
+    ./bin/run-java <path to tax return file>
+
+The program will parse your tax return and output it.
 
 ## Other Tax-related Projects
 * [Open Tax Solver](https://sourceforge.net/projects/opentaxsolver)

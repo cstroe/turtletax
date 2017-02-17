@@ -2,6 +2,7 @@ package com.github.cstroe.turtletax.impl.cells;
 
 import com.github.cstroe.turtletax.api.Cell;
 import com.github.cstroe.turtletax.api.CellId;
+import com.github.cstroe.turtletax.api.Form;
 import com.github.cstroe.turtletax.api.Line;
 import com.github.cstroe.turtletax.api.event.CellValueChangeSource;
 import com.github.cstroe.turtletax.api.event.CellValueChangeListener;
@@ -17,6 +18,7 @@ public abstract class BaseCell<V> implements Cell<V>, CellValueChangeSource, Cel
     @Getter @Setter private CellId id;
     @Getter @Setter private String label;
     @Getter @Setter private Line line;
+    @Getter @Setter private Form form;
 
     private List<CellValueChangeListener> listeners = new ArrayList<>();
 

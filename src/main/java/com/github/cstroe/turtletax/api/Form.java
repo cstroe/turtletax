@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 public interface Form {
-    String getId();
+    String getName();
     List<Cell> getCells();
     Optional<CellId> getCellId(String id);
     Cell getCell(Line line);
     Cell getCell(CellId id);
     Cell getCellById(String id);
     TaxReturn getTaxReturn();
+    void setTaxReturn(TaxReturn taxReturn);
     List<Mistake> validate();
 
     @SuppressWarnings("unchecked")
