@@ -29,6 +29,14 @@ Using maven:
 
 The program will parse your tax return and output it.
 
+## Code coverage
+
+To create the code converage report, run:
+
+    ./mvnw clean test jacoco:report
+
+Then in your browser open `target/site/jacoco/index.html` to view the report.
+
 ## Other Tax-related Projects
 * [Open Tax Solver](https://sourceforge.net/projects/opentaxsolver)
 * [phptax](https://sourceforge.net/projects/phptax)
