@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 import static com.github.cstroe.turtletax.api.Line.line;
 
 public class FormW2 extends BaseForm {
-    @Getter @Setter private String name;
-
     public FormW2(String id) {
         this();
         setName(id);

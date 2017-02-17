@@ -9,8 +9,6 @@ import java.util.stream.Stream;
 import static com.github.cstroe.turtletax.api.Line.line;
 
 public class Form1040 extends BaseForm implements Form1040CellNames {
-    @Getter @Setter String name;
-
     public Form1040(String name) {
         this();
         setName(name);

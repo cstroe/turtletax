@@ -44,6 +44,6 @@ public abstract class BaseCell<V> implements Cell<V>, CellValueChangeSource, Cel
 
     @Override
     public int compareTo(Object o) {
-        return ((Cell)o).getId().getId().compareTo(getId().getId());
+        return getId().getId().compareTo(((Cell)o).getId().getId());
     }
 }

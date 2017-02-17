@@ -49,7 +49,7 @@ public abstract class BaseForm implements Form {
 
         public void ifFilled(String checkThisId) {
             CellId cid = getCellId(checkThisId)
-                    .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", checkThisId)));;
+                    .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", checkThisId)));
             BaseForm.this.add(new RequiredCellIfValueIsFilledIn(BaseForm.this, cid, requiredId));
         }
 
@@ -64,6 +64,7 @@ public abstract class BaseForm implements Form {
     private Map<Line, Cell> cellsByLine;
     private List<Rule> rules;
     @Getter @Setter private TaxReturn taxReturn;
+    @Getter @Setter private String name;
 
     public BaseForm() {
         cells = new HashMap<>();
@@ -242,7 +243,7 @@ public abstract class BaseForm implements Form {
 
     protected Require Require(String requiredId) {
         CellId required = getCellId(requiredId)
-                .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", requiredId)));;
+                .orElseThrow(() -> new IllegalArgumentException(format("No cell with id '%s' was found.", requiredId)));
         return new Require(required);
     }
 
