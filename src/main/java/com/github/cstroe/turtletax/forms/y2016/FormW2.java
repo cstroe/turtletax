@@ -2,13 +2,8 @@ package com.github.cstroe.turtletax.forms.y2016;
 
 import com.github.cstroe.turtletax.api.BaseForm;
 import com.github.cstroe.turtletax.api.Line;
-import com.github.cstroe.turtletax.impl.TaxReturn;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.stream.Stream;
-
-import static com.github.cstroe.turtletax.api.Line.line;
 
 public class FormW2 extends BaseForm {
     public FormW2(String id) {

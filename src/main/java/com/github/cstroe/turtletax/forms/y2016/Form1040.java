@@ -1,8 +1,6 @@
 package com.github.cstroe.turtletax.forms.y2016;
 
 import com.github.cstroe.turtletax.api.BaseForm;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.stream.Stream;
 
