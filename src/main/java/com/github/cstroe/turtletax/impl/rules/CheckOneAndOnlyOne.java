@@ -43,7 +43,7 @@ public class CheckOneAndOnlyOne implements Rule {
 
             return mistakes;
         } catch (NoSuchElementException ex) {
-            return aSimpleMistake(null, "Exception while trying ifFilled ensure only one checkbox checked: %s", ex.getMessage());
+            return aSimpleMistake(null, "Exception while trying to ensure only one checkbox checked: %s", ex.getMessage());
         }
     }
 }

@@ -27,7 +27,7 @@ public class RequiredCellIfValueIsFilledIn implements Rule {
     @Override
     public List<Mistake> validate() {
         if(checkThis.on(form).isFilledIn() && required.on(form).isNotFilledIn()) {
-            return aSimpleMistake(required, format("Cell '%s' must be filled in because cell '%s' is filled in.", required, checkThis));
+            return aSimpleMistake(required, format("You must fill in this cell because cell '%s' is filled in.", required, checkThis));
         }
         return Collections.emptyList();
    }

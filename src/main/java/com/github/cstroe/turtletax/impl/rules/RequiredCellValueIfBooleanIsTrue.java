@@ -26,12 +26,12 @@ public class RequiredCellValueIfBooleanIsTrue implements Rule {
     public List<Mistake> validate() {
         BooleanCell checkbox = form.getCellAsType(checkBox, BooleanCell.class);
         if(checkbox.isNotFilledIn()) {
-            return aSimpleMistake(checkBox, format("Cell '%s' must be filled in.", checkBox.getId()));
+            return aSimpleMistake(checkBox, format("You must fill in this cell.", checkBox.getId()));
         }
 
         Cell value = form.getCell(required);
         if(value.isNotFilledIn()) {
-            return aSimpleMistake(required, format("Cell '%s' must be filled in.", required.getId()));
+            return aSimpleMistake(required, format("You must fill in this cell.", required.getId()));
         }
 
         return noMistake();

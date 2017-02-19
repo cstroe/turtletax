@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/cstroe/turtletax.svg?branch=master)](https://travis-ci.org/cstroe/turtletax)
+[![Coverage Status](https://coveralls.io/repos/github/cstroe/turtletax/badge.svg?branch=master)](https://coveralls.io/github/cstroe/turtletax?branch=master)
 ![GNU Affero GPL v3](https://img.shields.io/badge/license-Affero%20GPL%20v3-blue.svg)
 
 # TurtleTax
