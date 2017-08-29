@@ -1,6 +1,6 @@
 package com.github.cstroe.turtletax.api;
 
 public interface Mistake {
-    CellId getSource();
+    MistakeSource getSource();
     String getExplanation();
 }

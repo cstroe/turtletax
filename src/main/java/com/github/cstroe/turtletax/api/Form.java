@@ -30,7 +30,7 @@ public interface Form {
             }
             return (T) cell;
         } catch (ClassCastException ex) {
-            throw new IllegalStateException(format("Cell on line '%s' could not be cast ifFilled '%s'.",
+            throw new IllegalStateException(format("Cell on line '%s' could not be cast to '%s'.",
                     line.getLineNumber(), clazz.getCanonicalName()));
         }
     }
@@ -45,7 +45,7 @@ public interface Form {
             }
             return (T) cell;
         } catch (ClassCastException ex) {
-            throw new IllegalStateException(format("Cell with id '%s' could not be cast ifFilled '%s'.", id, clazz.getCanonicalName()));
+            throw new IllegalStateException(format("Cell with id '%s' could not be cast to '%s'.", id, clazz.getCanonicalName()));
         }
     }
 
@@ -60,7 +60,7 @@ public interface Form {
             }
             return (T) cell;
         } catch (ClassCastException ex) {
-            throw new IllegalStateException(format("Cell with id '%s' could not be cast ifFilled '%s'.", id, clazz.getCanonicalName()));
+            throw new IllegalStateException(format("Cell with id '%s' could not be cast to '%s'.", id, clazz.getCanonicalName()));
         }
     }
 

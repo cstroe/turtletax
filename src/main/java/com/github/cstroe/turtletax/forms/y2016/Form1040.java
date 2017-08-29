@@ -1,16 +1,12 @@
 package com.github.cstroe.turtletax.forms.y2016;
 
 import com.github.cstroe.turtletax.api.BaseForm;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.stream.Stream;
 
 import static com.github.cstroe.turtletax.api.Line.line;
 
 public class Form1040 extends BaseForm implements Form1040CellNames {
-    @Getter @Setter String name;
-
     public Form1040(String name) {
         this();
         setName(name);
@@ -38,8 +34,8 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
         StringCell("homeProvinceStateCounty", "Foreign province/state/county");
         StringCell("homePostalCode", "Foreign postal code");
 
-        BooleanCell("yourPecDonation", "Presidential Election Campaign: Check if you want $3 ifFilled go ifFilled this fund. Checking a box will not change your tax or refund. You:");
-        BooleanCell("spousePecDonation", "Presidential Election Campaign: Check if you want $3 ifFilled go ifFilled this fund. Checking a box will not change your tax or refund. Spouse:");
+        BooleanCell("yourPecDonation", "Presidential Election Campaign: Check if you want $3 to go to this fund. Checking a box will not change your tax or refund. You:");
+        BooleanCell("spousePecDonation", "Presidential Election Campaign: Check if you want $3 to go to this fund. Checking a box will not change your tax or refund. Spouse:");
 
         // filing status
         BooleanCell(FILING_STATUS_SINGLE, "Single", line(1));
@@ -71,7 +67,7 @@ public class Form1040 extends BaseForm implements Form1040CellNames {
             SsnCell    (prefix + "ssn", "Dependent SSN");
             Require(prefix + "ssn").ifFilled(prefix + "lastName");
 
-            StringCell (prefix + "relationship", "Dependent's relationship ifFilled you");
+            StringCell (prefix + "relationship", "Dependent's relationship to you");
             Require(prefix + "relationship").ifFilled(prefix + "ssn");
 
             BooleanCell(prefix + "qualifyingChild", "Dependent is a child under the age of 17 qualifying for child tax credit. (see instructions)");
